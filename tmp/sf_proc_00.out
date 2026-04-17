@@ -1,0 +1,25 @@
+
+up to date, audited 158 packages in 3s
+
+38 packages are looking for funding
+  run `npm fund` for details
+
+1 critical severity vulnerability
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+> build
+> vite build
+
+[36mvite v7.3.2 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 54 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mpublic/build/[22m[32mmanifest.json            [39m[1m[2m 0.33 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
+[2mpublic/build/[22m[35massets/app-pi6-9j0M.css  [39m[1m[2m48.12 kB[22m[1m[22m[2m │ gzip:  8.48 kB[22m
+[2mpublic/build/[22m[36massets/app-Due1s3iS.js   [39m[1m[2m83.33 kB[22m[1m[22m[2m │ gzip: 30.96 kB[22m
+[32m✓ built in 3.35s[39m
