@@ -13,6 +13,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
         @stack('styles')
     </head>
     <body class="font-sans antialiased bg-gray-50 h-full overflow-hidden">
@@ -25,8 +26,15 @@
                 <!-- Page Heading -->
                 @isset($header)
                     <header class="bg-white border-b border-gray-200 z-10 shrink-0 relative">
-                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                            {{ $header }}
+                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                            <div>
+                                {{ $header }}
+                            </div>
+                            
+                            <!-- Notifications -->
+                            <div class="flex items-center">
+                                @include('components.notifications-bell')
+                            </div>
                         </div>
                     </header>
                 @endisset

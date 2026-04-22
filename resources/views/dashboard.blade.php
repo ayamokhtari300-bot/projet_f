@@ -6,7 +6,14 @@
     </x-slot>
 
     @push('styles')
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
         <style>
+            /* Annuler le soulignement par défaut de Bootstrap */
+            a {
+                text-decoration: none;
+            }
+            
             :root {
                 --surface-container-lowest: #ffffff;
                 --primary: #6366f1;
@@ -29,6 +36,15 @@
             .premium-card-v2:hover {
                 transform: translateY(-5px);
                 box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+
+            .mission-card-hover {
+                transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+            }
+
+            .mission-card-hover:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
             }
 
             .stat-label {
@@ -149,6 +165,78 @@
                 <!-- Nombre des missions affichées -->
                 <p class="mb-4 text-sm text-gray-600">Affichage des 5 dernières missions.</p>
 
+                @role('validateur')
+                <div class="row g-4 mt-2">
+                    @foreach($missions as $mission)
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm mission-card-hover" style="border-radius: 16px; border: none; overflow: hidden; background: #fff;">
+                            <div class="card-header bg-white pt-4 pb-2 border-0 d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold mb-0 text-primary" style="font-size: 1.1rem;">
+                                    <i class="bi bi-geo-alt-fill me-1"></i>{{ $mission->destination }}
+                                </h5>
+                                <span class="badge rounded-pill
+                                    @if($mission->status == 'validee') bg-success
+                                    @elseif($mission->status == 'refusee') bg-danger
+                                    @elseif($mission->status == 'en_cours') bg-warning text-dark
+                                    @else bg-secondary @endif">
+                                    {{ strtoupper($mission->status) }}
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.70rem; letter-spacing: 0.5px;">Agent Demandeur</small>
+                                    <div class="mt-1 fw-medium text-dark">{{ optional($mission->user)->name ?? '---' }}</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.70rem; letter-spacing: 0.5px;">Type</small>
+                                        <div class="mt-1 text-dark">{{ $mission->type_mission }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.70rem; letter-spacing: 0.5px;">Véhicule</small>
+                                        <div class="mt-1 text-dark">{{ optional($mission->vehicule)->matricule ?? 'Non affecté' }}</div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.70rem; letter-spacing: 0.5px;">Date Aller</small>
+                                        <div class="mt-1 text-dark">{{ \Carbon\Carbon::parse($mission->date_aller)->format('d/m/Y') }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.70rem; letter-spacing: 0.5px;">Date Retour</small>
+                                        <div class="mt-1 text-dark">{{ \Carbon\Carbon::parse($mission->date_retour)->format('d/m/Y') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-light border-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <a href="{{ route('missions.show', $mission->id) }}" class="btn btn-sm btn-outline-primary">Détail 🔍</a>
+                                    
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ route('missions.edit', $mission->id) }}" class="btn btn-sm btn-primary" title="Modifier">✏️</a>
+                                        <form action="{{ route('missions.decision', $mission->id) }}" method="POST" class="m-0" onsubmit="return confirm('Vous allez valider cette mission.');">
+                                            @csrf
+                                            <input type="hidden" name="status" value="validee">
+                                            <button type="submit" class="btn btn-sm btn-success" title="Valider">✅</button>
+                                        </form>
+                                        <form action="{{ route('missions.decision', $mission->id) }}" method="POST" class="m-0" onsubmit="return confirm('Vous allez refuser cette mission.');">
+                                            @csrf
+                                            <input type="hidden" name="status" value="refusee">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Refuser">❌</button>
+                                        </form>
+                                        <form action="{{ route('missions.destroy', $mission->id) }}" method="POST" class="m-0" onsubmit="return confirm('Supprimer définitivement la mission ?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-dark" title="Supprimer">🗑️</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @else
                 <div class="overflow-x-auto">
                     <table class="w-full border border-gray-300">
                         <thead class="bg-gray-100">
@@ -318,7 +406,11 @@
                         </tbody>
                     </table>
                 </div>
+                @endrole
             </div>
         </div>
     </div>
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @endpush
 </x-app-layout>

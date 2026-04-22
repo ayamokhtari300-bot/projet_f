@@ -1,8 +1,8 @@
 <div x-data="{ open: false }" class="relative">
-    <button @click="open = !open" class="text-gray-400 hover:text-white transition duration-150 ease-in-out relative flex items-center p-2 rounded-full hover:bg-gray-800" title="{{ __('Notifications') }}">
+    <button @click="open = !open" class="text-gray-500 hover:text-gray-800 transition duration-150 ease-in-out relative flex items-center p-2 rounded-full hover:bg-gray-100" title="{{ __('Notifications') }}">
         <i class="bi bi-bell text-xl"></i>
         @if(auth()->user()->unreadNotifications->count() > 0)
-            <span class="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-gray-950">
+            <span class="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
                 {{ auth()->user()->unreadNotifications->count() }}
             </span>
         @endif
