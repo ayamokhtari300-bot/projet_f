@@ -4,7 +4,6 @@
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
-
     @push('styles')
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -165,7 +164,6 @@
                 <!-- Nombre des missions affichées -->
                 <p class="mb-4 text-sm text-gray-600">Affichage des 5 dernières missions.</p>
 
-                @role('validateur')
                 <div class="row g-4 mt-2">
                     @foreach($missions as $mission)
                     <div class="col-md-6 col-lg-4">
@@ -197,7 +195,7 @@
                                         <div class="mt-1 text-dark">{{ optional($mission->vehicule)->matricule ?? 'Non affecté' }}</div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row mb-3">
                                     <div class="col-6">
                                         <small class="text-muted text-uppercase fw-bold" style="font-size: 0.70rem; letter-spacing: 0.5px;">Date Aller</small>
                                         <div class="mt-1 text-dark">{{ \Carbon\Carbon::parse($mission->date_aller)->format('d/m/Y') }}</div>
@@ -207,125 +205,63 @@
                                         <div class="mt-1 text-dark">{{ \Carbon\Carbon::parse($mission->date_retour)->format('d/m/Y') }}</div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card-footer bg-light border-0 py-3">
-                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                                    <a href="{{ route('missions.show', $mission->id) }}" class="btn btn-sm btn-outline-primary">Détail 🔍</a>
-                                    
-                                    <div class="d-flex gap-1">
-                                        <a href="{{ route('missions.edit', $mission->id) }}" class="btn btn-sm btn-primary" title="Modifier">✏️</a>
-                                        <form action="{{ route('missions.decision', $mission->id) }}" method="POST" class="m-0" onsubmit="return confirm('Vous allez valider cette mission.');">
-                                            @csrf
-                                            <input type="hidden" name="status" value="validee">
-                                            <button type="submit" class="btn btn-sm btn-success" title="Valider">✅</button>
-                                        </form>
-                                        <form action="{{ route('missions.decision', $mission->id) }}" method="POST" class="m-0" onsubmit="return confirm('Vous allez refuser cette mission.');">
-                                            @csrf
-                                            <input type="hidden" name="status" value="refusee">
-                                            <button type="submit" class="btn btn-sm btn-danger" title="Refuser">❌</button>
-                                        </form>
-                                        <form action="{{ route('missions.destroy', $mission->id) }}" method="POST" class="m-0" onsubmit="return confirm('Supprimer définitivement la mission ?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-dark" title="Supprimer">🗑️</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-                @else
-                <div class="overflow-x-auto">
-                    <table class="w-full border border-gray-300">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="border px-4 py-2">Agent</th>
-                                <th class="border px-4 py-2">Type</th>
-                                <th class="border px-4 py-2">Destination</th>
-                                <th class="border px-4 py-2">Date Aller</th>
-                                <th class="border px-4 py-2">Date Retour</th>
-
-                                <th class="border px-4 py-2">Accompagnateurs</th>
-                                <th class="border px-4 py-2">Véhicule</th>
-                                <th class="border px-4 py-2">Status</th>
-                                <th class="border px-4 py-2">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($missions as $mission)
-                                <tr>
-                                    <!-- Agent -->
-                                    <td class="border px-4 py-2">{{ optional($mission->user)->name ?? '---' }}</td>
-                                    <!-- Type -->
-                                    <td class="border px-4 py-2">{{ $mission->type_mission }}</td>
-                                    <!-- Destination -->
-                                    <td class="border px-4 py-2">{{ $mission->destination }}</td>
-
-                                    <!-- Dates -->
-                                    <td class="border px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($mission->date_aller)->format('d/m/Y') }}
-                                    </td>
-                                    <td class="border px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($mission->date_retour)->format('d/m/Y') }}
-                                    </td>
-
-                                    <!-- Accompagnateurs -->
-                                    <td class="border px-4 py-2">
+                                <div>
+                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.70rem; letter-spacing: 0.5px;">Accompagnateurs</small>
+                                    <div class="mt-1 text-dark" style="font-size: 0.85rem;">
                                         @php $hasAccompagnateur = false; @endphp
                                         @foreach($mission->agents as $agent)
                                             @if($agent->pivot->agent_type == 'ac')
-                                                • {{ $agent->name }} <br>
+                                                <span class="badge bg-light text-dark border me-1 mb-1">{{ $agent->name }}</span>
                                                 @php $hasAccompagnateur = true; @endphp
                                             @endif
                                         @endforeach
-                                        @if(!$hasAccompagnateur) --- @endif
-                                    </td>
+                                        @if(!$hasAccompagnateur)
+                                            <span class="text-muted fst-italic">Aucun</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-light border-0 py-3">
+                                <div class="d-flex flex-column gap-3">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                        <a href="{{ route('missions.show', $mission->id) }}" class="btn btn-sm btn-outline-primary">Détail 🔍</a>
+                                        
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @role('agent')
+                                                <a href="{{ route('missions.edit', $mission->id) }}" class="btn btn-sm btn-primary" title="Modifier">✏️</a>
+                                                <form action="{{ route('missions.destroy', $mission->id) }}" method="POST" class="m-0" onsubmit="return confirm('Supprimer cette mission ?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">Supprimer❌</button>
+                                                </form>
+                                            @endrole
 
-                                    <!-- Véhicule -->
-                                    <td class="border px-4 py-2">
-                                        {{ optional($mission->vehicule)->matricule ?? 'Pas encore affecté' }}
-                                    </td>
-
-                                    <!-- Status -->
-                                    <td class="border px-4 py-2 uppercase font-semibold text-xs text-center">
-                                        <span class="px-2 py-1 rounded
-                                                    @if($mission->status == 'validee') bg-green-100 text-green-800
-                                                    @elseif($mission->status == 'refusee') bg-red-100 text-red-800
-                                                    @elseif($mission->status == 'en_cours') bg-yellow-100 text-yellow-800
-                                                    @else bg-gray-100 text-gray-800 @endif">
-                                            {{ $mission->status }}
-                                        </span>
-                                    </td>
-
-                                    <!-- Actions -->
-                                    <td class="border px-4 py-2 whitespace-nowrap">
-                                        <!-- Detail (Pour tout le monde) -->
-                                        <a href="{{ route('missions.show', $mission->id) }}"
-                                            class="text-blue-600 underline mr-2">Detail🔍</a>
-
-                                        @role('agent')
-                                        <!-- Edit -->
-                                        <a href="{{ route('missions.edit', $mission->id) }}"
-                                            class="text-green-600 underline mr-2">Edit✏️</a>
-
-                                        <!-- Delete -->
-                                        <form action="{{ route('missions.destroy', $mission->id) }}" method="POST"
-                                            style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button onclick="return confirm('Supprimer cette mission ?')"
-                                                class="text-red-600 underline">Supprimer❌</button>
-                                        </form>
-                                        @endrole
-
-                                        @role('operateur')
-                                        <div class="mt-2 flex flex-wrap gap-2 items-center">
-                                            <form action="{{ route('missions.affecter', $mission->id) }}" method="POST"
-                                                class="flex flex-col gap-2">
+                                            @role('validateur')
+                                                <a href="{{ route('missions.edit', $mission->id) }}" class="btn btn-sm btn-primary" title="Modifier">✏️</a>
+                                                <form action="{{ route('missions.decision', $mission->id) }}" method="POST" class="m-0" onsubmit="return confirm('Vous allez valider cette mission.');">
+                                                    @csrf
+                                                    <input type="hidden" name="status" value="validee">
+                                                    <button type="submit" class="btn btn-sm btn-success" title="Valider">Valider✅</button>
+                                                </form>
+                                                <form action="{{ route('missions.decision', $mission->id) }}" method="POST" class="m-0" onsubmit="return confirm('Vous allez refuser cette mission.');">
+                                                    @csrf
+                                                    <input type="hidden" name="status" value="refusee">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Refuser">Refuser❌</button>
+                                                </form>
+                                                <form action="{{ route('missions.destroy', $mission->id) }}" method="POST" class="m-0" onsubmit="return confirm('Supprimer définitivement la mission ?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-dark" title="Supprimer">Supprimer🗑️</button>
+                                                </form>
+                                            @endrole
+                                        </div>
+                                    </div>
+                                    
+                                    @role('operateur')
+                                        <div class="border-top pt-2 mt-1">
+                                            <form action="{{ route('missions.affecter', $mission->id) }}" method="POST" class="d-flex gap-2 mb-2">
                                                 @csrf
-                                                <select name="vehicule_id" class="border rounded px-2 py-1 form-select">
+                                                <select name="vehicule_id" class="form-select form-select-sm" style="flex: 1;">
                                                     <option value="">-- Choisir Véhicule --</option>
                                                     @foreach($vehicules as $vehicule)
                                                         <option value="{{ $vehicule->id }}" {{ $mission->vehicule_id == $vehicule->id ? 'selected' : '' }}>
@@ -333,80 +269,34 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                <button type="submit"
-                                                    class="bg-blue-500 text-white rounded px-2 py-1 text-sm hover:bg-blue-700">Affecter
-                                                    Véhicule</button>
+                                                <button type="submit" class="btn btn-sm btn-primary">Affecter</button>
                                             </form>
-
-                                            <!-- Bouton Envoyer au Validateur -->
-                                            <form action="{{ route('missions.send', $mission->id) }}" method="POST"
-                                                class="w-full">
-                                                @csrf
-                                                <button type="submit"
-                                                    class="w-full bg-yellow-500 text-black rounded px-2 py-1 text-sm hover:bg-yellow-700"
-                                                    onclick="return confirm('Êtes-vous sûr de vouloir envoyer cette mission au validateur ?');">
-                                                    Envoyer au Validateur ➡️
-                                                </button>
-                                            </form>
-
-                                            <!-- Bouton Notifier Agent (si validée/refusée) -->
-                                            @if(in_array($mission->status, ['validee', 'refusee']))
-                                                <form action="{{ route('missions.notifyAgent', $mission->id) }}" method="POST"
-                                                    class="w-full">
+                                            
+                                            <div class="d-flex gap-2">
+                                                <form action="{{ route('missions.send', $mission->id) }}" method="POST" class="m-0" style="flex: 1;">
                                                     @csrf
-                                                    <button type="submit"
-                                                        class="w-full bg-indigo-500 text-black rounded px-2 py-1 text-sm hover:bg-indigo-700"
-                                                        onclick="return confirm('Notifier l\'agent du statut final ?');">
-                                                        Notifier l'Agent 📧
+                                                    <button type="submit" class="btn btn-sm btn-warning w-100 fw-bold" onclick="return confirm('Êtes-vous sûr de vouloir envoyer cette mission au validateur ?');">
+                                                        Envoyer au Validateur ➡️
                                                     </button>
                                                 </form>
-                                            @endif
+
+                                                @if(in_array($mission->status, ['validee', 'refusee']))
+                                                    <form action="{{ route('missions.notifyAgent', $mission->id) }}" method="POST" class="m-0" style="flex: 1;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-info w-100 text-white fw-bold" onclick="return confirm('Notifier l\'agent du statut final ?');">
+                                                            Notifier l'Agent 📧
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
                                         </div>
-                                        @endrole
-
-                                        @role('validateur')
-                                        <div class="mt-2 flex gap-2 flex-wrap">
-                                            <!-- Bouton Éditer -->
-                                            <a href="{{ route('missions.edit', $mission->id) }}"
-                                                class="bg-blue-600 text-white rounded px-2 py-1 text-sm hover:bg-blue-800 flex items-center">
-                                                Modifier ✏️
-                                            </a>
-
-                                            <form action="{{ route('missions.decision', $mission->id) }}" method="POST"
-                                                onsubmit="return confirm('Êtes-vous sûr de vouloir valider cette mission ?');">
-                                                @csrf
-                                                <input type="hidden" name="status" value="validee">
-                                                <button type="submit"
-                                                    class="bg-green-500 text-black rounded px-2 py-1 text-sm hover:bg-green-700">Valider
-                                                    ✅</button>
-                                            </form>
-                                            <form action="{{ route('missions.decision', $mission->id) }}" method="POST"
-                                                onsubmit="return confirm('Êtes-vous sûr de vouloir refuser cette mission ?');">
-                                                @csrf
-                                                <input type="hidden" name="status" value="refusee">
-                                                <button type="submit"
-                                                    class="bg-red-500 text-black rounded px-2 py-1 text-sm hover:bg-red-700">refuser
-                                                    ❌</button>
-                                            </form>
-
-                                            <!-- Bouton Supprimer pour Validateur -->
-                                            <form action="{{ route('missions.destroy', $mission->id) }}" method="POST"
-                                                onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette mission ?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="bg-gray-800 text-white rounded px-2 py-1 text-sm hover:bg-black">Supprimer
-                                                    🗑️</button>
-                                            </form>
-                                        </div>
-                                        @endrole
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                    @endrole
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
                 </div>
-                @endrole
             </div>
         </div>
     </div>

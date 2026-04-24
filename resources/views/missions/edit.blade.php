@@ -19,7 +19,7 @@
             overflow: hidden;
         }
         .form-header-gradient {
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #004680 0%, #4484BA 100%);
             color: white;
             padding: 1.5rem 2rem;
             border-bottom: none;
@@ -36,8 +36,8 @@
             transition: all 0.2s ease;
         }
         .form-control:focus, .form-select:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+            border-color: #0A2A88;
+            box-shadow: 0 0 0 0.25rem rgba(10, 42, 136, 0.25);
         }
         .premium-input-group {
             background-color: #f9fafb;
@@ -47,7 +47,7 @@
             border: 1px solid #f3f4f6;
         }
         .btn-custom-save {
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #004680 0%, #4484BA 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -57,7 +57,7 @@
         }
         .btn-custom-save:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.4);
+            box-shadow: 0 4px 15px rgba(10, 42, 136, 0.4);
             color: white;
         }
         .btn-custom-cancel {
@@ -130,15 +130,27 @@
                                 <!-- Accompagnateurs -->
                                 <div class="col-12">
                                     <div class="premium-input-group">
-                                        <label for="agents" class="form-label"><i class="bi bi-people-fill text-primary me-2"></i>Accompagnateurs</label>
-                                        <select name="agents[]" id="agents" multiple class="form-select" style="height: 120px;">
-                                            @foreach($users as $user)
-                                                <option value="{{ $user->id }}" {{ $mission->agents->contains($user->id) ? 'selected' : '' }}>
-                                                    {{ $user->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <label class="form-label"><i class="bi bi-people-fill text-primary me-2"></i>Accompagnateurs (<span id="agent_count">0</span>)</label>
                                         
+                                        <div class="d-flex gap-2 mb-3">
+                                            <select id="agent_select" class="form-select">
+                                                <option value="">-- Sélectionner un accompagnateur --</option>
+                                                <!-- Populated by JS -->
+                                            </select>
+                                            <button type="button" id="add_agent_btn" class="btn btn-primary px-4">
+                                                <i class="bi bi-plus-lg me-1"></i> Ajouter
+                                            </button>
+                                        </div>
+
+                                        <div id="selected_agents_list" class="d-flex flex-wrap gap-2 p-3 bg-white border rounded-3" style="min-height: 80px;">
+                                            <span class="text-muted w-100 text-center py-2" id="empty_list_msg">Aucun accompagnateur sélectionné</span>
+                                            <!-- Badges will appear here -->
+                                        </div>
+
+                                        <!-- Hidden inputs for form submission -->
+                                        <div id="hidden_agents_inputs"></div>
+                                        
+                                        <small class="text-muted mt-2 d-block">Modifiez la liste des agents qui vous accompagnent.</small>
                                     </div>
                                 </div>
 
@@ -170,5 +182,100 @@
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const agentSelect = document.getElementById('agent_select');
+            const addBtn = document.getElementById('add_agent_btn');
+            const listContainer = document.getElementById('selected_agents_list');
+            const hiddenInputs = document.getElementById('hidden_agents_inputs');
+            const agentCount = document.getElementById('agent_count');
+            const emptyMsg = document.getElementById('empty_list_msg');
+            
+            let selectedAgents = new Set();
+            let allAgents = [];
+
+            // Load agents via API
+            fetch("{{ route('api.accompagnateurs') }}")
+                .then(response => response.json())
+                .then(agents => {
+                    allAgents = agents;
+                    agents.forEach(agent => {
+                        const option = document.createElement('option');
+                        option.value = agent.id;
+                        option.textContent = agent.name;
+                        agentSelect.appendChild(option);
+                    });
+
+                    // Handle existing agents or old values
+                    let initialAgents = @json(old('agents'));
+                    if (!initialAgents) {
+                        initialAgents = @json($mission->agents->pluck('id'));
+                    }
+                    
+                    if (initialAgents && initialAgents.length > 0) {
+                        initialAgents.forEach(id => {
+                            const agent = allAgents.find(a => a.id == id);
+                            if (agent) {
+                                addAgent(agent.id, agent.name);
+                            }
+                        });
+                    }
+                });
+
+            function updateUI() {
+                if (selectedAgents.size > 0) {
+                    emptyMsg.style.display = 'none';
+                } else {
+                    emptyMsg.style.display = 'block';
+                }
+                agentCount.textContent = selectedAgents.size;
+            }
+
+            function addAgent(id, name) {
+                if (!id || selectedAgents.has(id.toString())) return;
+
+                selectedAgents.add(id.toString());
+
+                // Add badge to UI
+                const badge = document.createElement('div');
+                badge.className = 'badge bg-primary d-flex align-items-center gap-2 p-2 px-3 rounded-pill shadow-sm';
+                badge.style.fontSize = '0.9rem';
+                badge.style.fontWeight = '500';
+                badge.innerHTML = `
+                    <span>${name}</span>
+                    <button type="button" class="btn-close btn-close-white" style="font-size: 0.55rem;" data-id="${id}"></button>
+                `;
+                listContainer.appendChild(badge);
+
+                // Add hidden input
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'agents[]';
+                input.value = id;
+                input.id = `input_agent_${id}`;
+                hiddenInputs.appendChild(input);
+
+                // Remove listener
+                badge.querySelector('.btn-close').addEventListener('click', function() {
+                    const agentId = this.getAttribute('data-id');
+                    selectedAgents.delete(agentId);
+                    badge.remove();
+                    const hiddenInp = document.getElementById(`input_agent_${agentId}`);
+                    if (hiddenInp) hiddenInp.remove();
+                    updateUI();
+                });
+
+                updateUI();
+            }
+
+            addBtn.addEventListener('click', function() {
+                const id = agentSelect.value;
+                const name = agentSelect.options[agentSelect.selectedIndex].text;
+                if (!id) return;
+                addAgent(id, name);
+                agentSelect.value = '';
+            });
+        });
+    </script>
     @endpush
 </x-app-layout>

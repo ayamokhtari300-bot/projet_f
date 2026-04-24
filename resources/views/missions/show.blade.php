@@ -19,7 +19,7 @@
             overflow: hidden;
         }
         .card-header-gradient {
-            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #004680 0%, #4484BA 100%);
             color: white;
             padding: 1.5rem 2rem;
             border-bottom: none;
@@ -51,7 +51,7 @@
             position: relative;
             padding-bottom: 0.5rem;
             margin-bottom: 1.5rem;
-            color: #4f46e5;
+            color: #004680;
             font-weight: 700;
         }
         .section-title::after {
@@ -61,7 +61,7 @@
             bottom: 0;
             width: 50px;
             height: 3px;
-            background-color: #4f46e5;
+            background-color: #004680;
             border-radius: 3px;
         }
         .btn-custom {

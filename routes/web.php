@@ -26,6 +26,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/missions/{id}/send', [MissionController::class, 'sendToValidateur'])->name('missions.send');
     Route::post('/missions/{id}/notify-agent', [MissionController::class, 'notifyAgent'])->name('missions.notifyAgent');
 
+    /* API Routes (Internes) */
+    Route::get('/api/accompagnateurs', [MissionController::class, 'getAccompanists'])->name('api.accompagnateurs');
+
     /* Notifications */
     Route::post('/notifications/{id}/read', function ($id) {
         $notification = auth()->user()->unreadNotifications->where('id', $id)->first();

@@ -127,13 +127,13 @@ class MissionController extends Controller
         ]);
 
         // sync accompagnateurs
-        if ($request->has('agents')) {
-            $syncData = [];
+        $syncData = [];
+        if ($request->has('agents') && is_array($request->agents)) {
             foreach ($request->agents as $agentId) {
                 $syncData[$agentId] = ['agent_type' => 'ac'];
             }
-            $mission->agents()->sync($syncData);
         }
+        $mission->agents()->sync($syncData);
 
         return redirect()->route('missions.index')->with('success', 'Mission mise à jour avec succès.');
     }
@@ -225,5 +225,18 @@ class MissionController extends Controller
         \Illuminate\Support\Facades\Notification::send($validateurs, new \App\Notifications\MissionSentToValidator($mission));
 
         return redirect()->route('dashboard')->with('success', 'Mission envoyée au validateur avec succès.');
+    }
+
+    /**
+     * Get list of accompanists (agents) for dynamic select via API.
+     */
+    public function getAccompanists()
+    {
+        // On récupère les utilisateurs sauf l'utilisateur connecté (car il ne peut pas être son propre accompagnateur)
+        $agents = User::where('id', '!=', auth()->id())
+                      ->select('id', 'name')
+                      ->get();
+                      
+        return response()->json($agents);
     }
 }
