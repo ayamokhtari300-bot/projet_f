@@ -90,9 +90,22 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Statistiques Premium -->
+            {{-- Statistiques Premium --}}
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-                <!-- Carte In Progress -->
+
+                {{-- Carte Total Missions --}}
+                <div class="premium-card-v2 bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+                    <div class="card-accent bg-blue-500"></div>
+                    <div>
+                        <div class="stat-label">Total Missions</div>
+                        <div class="stat-value">{{ sprintf('%02d', $totalMissions) }}</div>
+                    </div>
+                    <div class="stat-footer text-blue-600">
+                        <i class="bi bi-collection-fill"></i> Toutes les missions
+                    </div>
+                </div>
+
+                {{-- Carte En Cours --}}
                 <div class="premium-card-v2 bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-primary">
                     <div class="card-accent bg-indigo-500"></div>
                     <div>
@@ -104,7 +117,7 @@
                     </div>
                 </div>
 
-                <!-- Carte Validées -->
+                {{-- Carte Validées --}}
                 <div class="premium-card-v2 bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-green-500">
                     <div class="card-accent bg-green-500"></div>
                     <div>
@@ -116,7 +129,7 @@
                     </div>
                 </div>
 
-                <!-- Carte Refusées -->
+                {{-- Carte Refusées --}}
                 <div class="premium-card-v2 bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-red-500">
                     <div class="card-accent bg-red-500"></div>
                     <div>
@@ -127,6 +140,7 @@
                         <i class="bi bi-exclamation-triangle-fill"></i> Nécessite révision
                     </div>
                 </div>
+
             </div>
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">

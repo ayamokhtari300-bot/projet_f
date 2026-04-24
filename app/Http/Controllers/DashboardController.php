@@ -33,20 +33,22 @@ class DashboardController extends Controller
 
         // Statistiques
         if ($user->hasRole('agent')) {
-            $totalValidee = Mission::where('user_id', $user->id)->where('status', 'validee')->count();
-            $totalRefusee = Mission::where('user_id', $user->id)->where('status', 'refusee')->count();
-            $totalEnCours = Mission::where('user_id', $user->id)->where(function($q) {
+            $totalMissions = Mission::where('user_id', $user->id)->count();
+            $totalValidee  = Mission::where('user_id', $user->id)->where('status', 'validee')->count();
+            $totalRefusee  = Mission::where('user_id', $user->id)->where('status', 'refusee')->count();
+            $totalEnCours  = Mission::where('user_id', $user->id)->where(function($q) {
                 $q->where('status', 'en_attente')->orWhere('status', 'en_cours');
             })->count();
         } else {
-            $totalValidee = Mission::where('status', 'validee')->count();
-            $totalRefusee = Mission::where('status', 'refusee')->count();
-            $totalEnCours = Mission::where(function($q) {
+            $totalMissions = Mission::count();
+            $totalValidee  = Mission::where('status', 'validee')->count();
+            $totalRefusee  = Mission::where('status', 'refusee')->count();
+            $totalEnCours  = Mission::where(function($q) {
                 $q->where('status', 'en_attente')->orWhere('status', 'en_cours');
             })->count();
         }
 
-        return view('dashboard', compact('missions', 'user', 'vehicules', 'totalValidee', 'totalRefusee', 'totalEnCours'));
+        return view('dashboard', compact('missions', 'user', 'vehicules', 'totalMissions', 'totalValidee', 'totalRefusee', 'totalEnCours'));
     }
 }
 
