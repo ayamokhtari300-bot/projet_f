@@ -113,17 +113,18 @@ class MissionController extends Controller
         Gate::authorize('update', $mission);
 
         $request->validate([
+            'type_mission' => 'required',
             'destination' => 'required',
             'date_aller' => 'required|date',
             'date_retour' => 'required|date|after_or_equal:date_aller',
         ]);
 
         $mission->update([
+            'type_mission' => $request->type_mission,
             'destination' => $request->destination,
+            'description' => $request->description,
             'date_aller' => $request->date_aller,
             'date_retour' => $request->date_retour,
-            'user_id' => $request->user_id,
-            'vehicule_id' => $request->vehicule_id,
         ]);
 
         // sync accompagnateurs

@@ -212,11 +212,11 @@
                                 <div class="row mb-3">
                                     <div class="col-6">
                                         <small class="text-muted text-uppercase fw-bold" style="font-size: 0.70rem; letter-spacing: 0.5px;">Date Aller</small>
-                                        <div class="mt-1 text-dark">{{ \Carbon\Carbon::parse($mission->date_aller)->format('d/m/Y') }}</div>
+                                        <div class="mt-1 text-dark">{{ \Carbon\Carbon::parse($mission->date_aller)->format('d/m/Y à H:i') }}</div>
                                     </div>
                                     <div class="col-6">
                                         <small class="text-muted text-uppercase fw-bold" style="font-size: 0.70rem; letter-spacing: 0.5px;">Date Retour</small>
-                                        <div class="mt-1 text-dark">{{ \Carbon\Carbon::parse($mission->date_retour)->format('d/m/Y') }}</div>
+                                        <div class="mt-1 text-dark">{{ \Carbon\Carbon::parse($mission->date_retour)->format('d/m/Y à H:i')}}</div>
                                     </div>
                                 </div>
                                 <div>

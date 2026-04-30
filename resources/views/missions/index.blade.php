@@ -160,11 +160,11 @@
                                 <div class="row mb-3">
                                     <div class="col-6">
                                         <div class="card-meta-label"><i class="bi bi-calendar-event me-1"></i>Date Aller</div>
-                                        <div class="card-meta-value">{{ \Carbon\Carbon::parse($mission->date_aller)->format('d/m/Y') }}</div>
+                                        <div class="card-meta-value">{{ \Carbon\Carbon::parse($mission->date_aller)->format('d/m/Y à H:i') }}</div>
                                     </div>
                                     <div class="col-6">
                                         <div class="card-meta-label"><i class="bi bi-calendar-check me-1"></i>Date Retour</div>
-                                        <div class="card-meta-value">{{ \Carbon\Carbon::parse($mission->date_retour)->format('d/m/Y') }}</div>
+                                        <div class="card-meta-value">{{ \Carbon\Carbon::parse($mission->date_retour)->format('d/m/Y à H:i') }}</div>
                                     </div>
                                 </div>
 

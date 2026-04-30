@@ -15,6 +15,13 @@
                 {{ __('Missions') }}
             </x-nav-link>
 
+            @hasanyrole('operateur|validateur')
+                <x-nav-link :href="route('vehicules.index')" :active="request()->routeIs('vehicules.*')">
+                    <span class="mr-3">🚗</span>
+                    {{ __('Véhicules') }}
+                </x-nav-link>
+            @endhasanyrole
+
             <div class="pt-4 pb-2">
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4">Account</p>
             </div>

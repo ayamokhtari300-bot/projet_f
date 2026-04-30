@@ -116,17 +116,16 @@
                                     <div class="premium-input-group h-100">
                                         <div class="mb-4">
                                             <label for="date_aller" class="form-label"><i class="bi bi-calendar-event text-primary me-2"></i>Date Aller</label>
-                                            <input type="date" name="date_aller" id="date_aller" value="{{ \Carbon\Carbon::parse($mission->date_aller)->format('Y-m-d') }}"
+                                            <input type="datetime-local" name="date_aller" id="date_aller" value="{{ \Carbon\Carbon::parse($mission->date_aller)->format('Y-m-d\TH:i') }}"
                                                    class="form-control" required>
                                         </div>
                                         <div>
                                             <label for="date_retour" class="form-label"><i class="bi bi-calendar-check text-primary me-2"></i>Date Retour</label>
-                                            <input type="date" name="date_retour" id="date_retour" value="{{ \Carbon\Carbon::parse($mission->date_retour)->format('Y-m-d') }}"
+                                            <input type="datetime-local" name="date_retour" id="date_retour" value="{{ \Carbon\Carbon::parse($mission->date_retour)->format('Y-m-d\TH:i') }}"
                                                    class="form-control" required>
                                         </div>
                                     </div>
                                 </div>
-
                                 <!-- Accompagnateurs -->
                                 <div class="col-12">
                                     <div class="premium-input-group">

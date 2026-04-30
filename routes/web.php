@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MissionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\VehiculeController;
 
 /* Page d'accueil */
 Route::get('/', function () {
@@ -25,6 +26,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/missions/{id}/decision', [MissionController::class, 'decision'])->name('missions.decision');
     Route::post('/missions/{id}/send', [MissionController::class, 'sendToValidateur'])->name('missions.send');
     Route::post('/missions/{id}/notify-agent', [MissionController::class, 'notifyAgent'])->name('missions.notifyAgent');
+
+    /* Véhicules (Opérateur et Validateur) */
+    Route::middleware(['role:operateur|validateur'])->group(function () {
+        Route::get('/vehicules', [VehiculeController::class, 'index'])->name('vehicules.index');
+    });
+
+    /* Changer statut véhicule (Opérateur) */
+    Route::middleware(['role:operateur'])->group(function () {
+        Route::patch('/vehicules/{vehicule}/toggle-status', [VehiculeController::class, 'toggleStatus'])->name('vehicules.toggle-status');
+    });
+
 
     /* API Routes (Internes) */
     Route::get('/api/accompagnateurs', [MissionController::class, 'getAccompanists'])->name('api.accompagnateurs');
